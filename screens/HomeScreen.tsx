@@ -29,7 +29,7 @@ export default function HomeScreen() {
         >
           <Image
             source={{
-              uri: "https://img.freepik.com/free-vector/casino-poker-game-banner-with-3d-dice-win-big-vector_1017-46273.jpg",
+              uri: "https://biospc.org/wp-content/uploads/2023/11/TC-Lottery-1024x576.jpg",
             }}
             style={styles.dashboard}
           />
