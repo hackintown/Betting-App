@@ -14,7 +14,8 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.hackintown.ExcellentHacks"
     },
     "android": {
       "adaptiveIcon": {
@@ -22,6 +23,9 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.hackintown.ExcellentHacks"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/3b2bc869-27e5-4129-9026-fe52a740391a"
     },
     "web": {
       "bundler": "metro",
@@ -41,6 +45,9 @@
       "eas": {
         "projectId": "3b2bc869-27e5-4129-9026-fe52a740391a"
       }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
     }
   }
 }

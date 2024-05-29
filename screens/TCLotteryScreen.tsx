@@ -1,7 +1,14 @@
 // app/index.tsx
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Dimensions, Image } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Dimensions,
+  Image,
+  ImageBackground,
+} from "react-native";
 
 const { width: viewportWidth } = Dimensions.get("window");
 const data = [{ title: "Item 1" }, { title: "Item 2" }, { title: "Item 3" }];
@@ -64,51 +71,82 @@ const TCLotterScreen: React.FC = () => {
           style={styles.numCircle}
         />
       </View>
-      <View>
-        <Image
+      <View style={{ position: "relative", flex: 1 }}>
+        <ImageBackground
           source={{
             uri: "https://9987up.club/assets/png/diban-ad1641e9.png",
           }}
           style={styles.dashboard}
-        />
-        <Text
-          style={{
-            position: "absolute",
-            bottom: 70,
-            left: 20,
-            color: "#fff",
-            fontSize: 15,
-            fontWeight: 500,
-          }}
         >
-          Win Go 1Min
-        </Text>
-        <View style={styles.iconBallWrap}>
-          <Image
-            source={{
-              uri: "https://9987up.club/assets/png/n4-cb84933b.png",
-            }}
-            style={styles.iconBall}
-          />
-          <Image
-            source={{
-              uri: "https://9987up.club/assets/png/n4-cb84933b.png",
-            }}
-            style={styles.iconBall}
-          />
-          <Image
-            source={{
-              uri: "https://9987up.club/assets/png/n4-cb84933b.png",
-            }}
-            style={styles.iconBall}
-          />
-          <Image
-            source={{
-              uri: "https://9987up.club/assets/png/n4-cb84933b.png",
-            }}
-            style={styles.iconBall}
-          />
-        </View>
+          <View style={[styles.absoluteView, styles.leftView]}>
+            <Text
+              style={{
+                color: "#fff",
+                fontSize: 15,
+                fontWeight: 500,
+                marginRight: 8,
+                marginBottom: 12,
+              }}
+            >
+              Win Go 1Min
+            </Text>
+            <View style={styles.iconBallWrap}>
+              <Image
+                source={{
+                  uri: "https://9987up.club/assets/png/n4-cb84933b.png",
+                }}
+                style={styles.iconBall}
+              />
+              <Image
+                source={{
+                  uri: "https://9987up.club/assets/png/n4-cb84933b.png",
+                }}
+                style={styles.iconBall}
+              />
+              <Image
+                source={{
+                  uri: "https://9987up.club/assets/png/n4-cb84933b.png",
+                }}
+                style={styles.iconBall}
+              />
+              <Image
+                source={{
+                  uri: "https://9987up.club/assets/png/n4-cb84933b.png",
+                }}
+                style={styles.iconBall}
+              />
+            </View>
+          </View>
+          <View style={[styles.absoluteView, styles.rightView]}>
+            <Text
+              style={{
+                color: "#fff",
+                fontSize: 15,
+                fontWeight: 500,
+                marginBottom: 12,
+              }}
+            >
+              Time Remaining
+            </Text>
+            <View style={styles.leftContent}>
+              <View style={styles.timeWrap}>
+                <Text style={styles.timeCount}>0</Text>
+              </View>
+              <View style={styles.timeWrap}>
+                <Text style={styles.timeCount}>0</Text>
+              </View>
+              <View style={styles.timeWrap}>
+                <Text style={styles.timeCount}>:</Text>
+              </View>
+              <View style={styles.timeWrap}>
+                <Text style={styles.timeCount}>0</Text>
+              </View>
+              <View style={styles.timeWrap}>
+                <Text style={styles.timeCount}>0</Text>
+              </View>
+            </View>
+          </View>
+        </ImageBackground>
       </View>
       <View style={styles.footer}>
         <Text style={styles.backText} onPress={() => router.push("/home")}>
@@ -133,6 +171,25 @@ const styles = StyleSheet.create({
     marginTop: 8,
     borderRadius: 20,
   },
+  absoluteView: {
+    position: "absolute",
+    width: "50%",
+    height: "100%",
+    display: "flex",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    paddingHorizontal:10,
+  },
+  leftView: {
+    left: 0,
+    display: "flex",
+    alignItems: "flex-start",
+  },
+  rightView: {
+    right: 0,
+    display: "flex",
+    alignItems: "flex-end",
+  },
   numCircle: {
     width: 120,
     height: 100,
@@ -141,16 +198,16 @@ const styles = StyleSheet.create({
     right: 2,
   },
   iconBallWrap: {
-    marginTop: 10,
-    position: "absolute",
-    bottom: 20,
-    left: 15,
     flexDirection: "row",
   },
   iconBall: {
     width: 35,
     height: 35,
     marginRight: 8,
+  },
+  leftContent: {
+    flexDirection: "row",
+    alignItems: "flex-end",
   },
   header: {
     paddingTop: 20,
@@ -177,7 +234,17 @@ const styles = StyleSheet.create({
     fontWeight: "900",
     alignItems: "center",
   },
-
+  timeWrap: {
+    backgroundColor: "#fff",
+    marginRight: 8,
+    padding: 5,
+    borderRadius: 4,
+  },
+  timeCount: {
+    fontSize: 20,
+    color: "#ff5c00",
+    fontWeight: 700,
+  },
   footer: {
     paddingVertical: 20,
   },
