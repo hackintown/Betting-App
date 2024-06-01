@@ -1,6 +1,8 @@
 // app/index.tsx
+import { Provider as PaperProvider, Button } from "react-native-paper";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
+import AwesomeIcon from "react-native-vector-icons/FontAwesome";
 import {
   View,
   Text,
@@ -8,16 +10,36 @@ import {
   Dimensions,
   Image,
   ImageBackground,
+  FlatList,
+  ListRenderItem,
+  TouchableOpacity,
 } from "react-native";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 
 const { width: viewportWidth } = Dimensions.get("window");
 const data = [{ title: "Item 1" }, { title: "Item 2" }, { title: "Item 3" }];
+
+type TableItem = {
+  period: number;
+  number: number;
+  bigSmall: string;
+  color: string;
+};
+const initialTableData: TableItem[] = [
+  {
+    period: 20240601010938,
+    number: 9,
+    bigSmall: "Big",
+    color: "green",
+  },
+];
 
 type Item = {
   title: string;
 };
 
 const TCLotterScreen: React.FC = () => {
+  const [tableData, setTableData] = useState<TableItem[]>(initialTableData);
   const [dailyActiveUsers, setDailyActiveUsers] = useState(0);
 
   useEffect(() => {
@@ -32,8 +54,36 @@ const TCLotterScreen: React.FC = () => {
     return () => clearInterval(interval); // Clear interval on component unmount
   }, []);
 
+  useEffect(() => {
+    const intervalUpdateData = setInterval(() => {
+      // Update "bigSmall" randomly for the first item
+      const updatedBigSmall = Math.random() > 0.5 ? "Big" : "Small";
+
+      // Increase "period" by 1
+      const updatedPeriod = tableData[0].period + 1;
+
+      // Update both "period" and "bigSmall" of the first item
+      setTableData((prevData) => [
+        {
+          ...prevData[0],
+          period: updatedPeriod,
+          bigSmall: updatedBigSmall,
+        },
+        ...prevData.slice(1), // Keep other items unchanged
+      ]);
+    }, 1000); // Update every second
+
+    return () => clearInterval(intervalUpdateData); // Clear interval on component unmount
+  }, [tableData]);
+
+  const renderItem: ListRenderItem<TableItem> = ({ item }) => (
+    <View style={styles.row}>
+      <Text style={styles.cell}>{item.period}</Text>
+      <Text style={styles.cell}>{item.bigSmall}</Text>
+    </View>
+  );
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { flexDirection: "column" }]}>
       <View style={styles.header}>
         <Text style={styles.heading}>
           TC Lottery <Text style={{ color: "blue" }}>Hacks</Text>
@@ -71,7 +121,7 @@ const TCLotterScreen: React.FC = () => {
           style={styles.numCircle}
         />
       </View>
-      <View style={{ position: "relative", flex: 1 }}>
+      <View style={{ position: "relative" }}>
         <ImageBackground
           source={{
             uri: "https://9987up.club/assets/png/diban-ad1641e9.png",
@@ -84,7 +134,7 @@ const TCLotterScreen: React.FC = () => {
                 color: "#fff",
                 fontSize: 15,
                 fontWeight: 500,
-                marginRight: 8,
+                marginLeft: 8,
                 marginBottom: 12,
               }}
             >
@@ -124,6 +174,7 @@ const TCLotterScreen: React.FC = () => {
                 fontSize: 15,
                 fontWeight: 500,
                 marginBottom: 12,
+                marginRight: 10,
               }}
             >
               Time Remaining
@@ -148,10 +199,83 @@ const TCLotterScreen: React.FC = () => {
           </View>
         </ImageBackground>
       </View>
-      <View style={styles.footer}>
-        <Text style={styles.backText} onPress={() => router.push("/home")}>
-          Back
-        </Text>
+      <View>
+        <View style={styles.tableHeader}>
+          <Text style={styles.headerCell}>Period No</Text>
+          <Text style={styles.headerCell}>Big Small</Text>
+        </View>
+        <FlatList
+          data={tableData}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.period.toString()}
+        />
+      </View>
+      <View style={styles.buttonContainer}>
+        <View style={{ alignItems: "center" }}>
+          <Text
+            style={{
+              fontWeight: "500",
+              marginVertical: 10,
+              padding: 10,
+              borderWidth: 1,
+              borderColor: "red",
+              borderRadius: 5,
+              backgroundColor: "#ffebee", // Light red background color
+            }}
+          >
+            Create a new TC Lottery account by clicking on the 'Register'
+            button. If you use this mod in your old account, the mod will not
+            work. Click 'Register' to create a new account. AR क्लिक करके एक नया
+            account बनाएं, यदि आप इस मॉड का उपयोग अपने पुराने account में करते
+            हैं, तो मॉड काम नहीं करेगा।
+          </Text>
+        </View>
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            gap: 10,
+            marginVertical: 10,
+            width: "100%",
+          }}
+        >
+          <PaperProvider
+            settings={{
+              icon: (props) => <AwesomeIcon {...props} />,
+            }}
+          >
+            <Button
+              mode="contained"
+              onPress={() => console.log("Pressed")}
+              icon="user-plus"
+              style={{ marginBottom: 10 }}
+            >
+              Register
+            </Button>
+          </PaperProvider>
+          <PaperProvider
+            settings={{
+              icon: (props) => <AwesomeIcon {...props} />,
+            }}
+          >
+            <Button
+              mode="contained"
+              onPress={() => console.log("Pressed")}
+              icon="telegram"
+            >
+              Telegram
+            </Button>
+          </PaperProvider>
+        </View>
+        <View>
+          <TouchableOpacity
+            onPress={() => router.push("/home")}
+            style={styles.backButton}
+          >
+            <MaterialIcons name="arrow-back-ios" size={15} color="black" />
+            <Text style={styles.backText}>Go Back</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -161,7 +285,6 @@ export default TCLotterScreen;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     padding: 15,
     backgroundColor: "#ffffff",
   },
@@ -176,9 +299,10 @@ const styles = StyleSheet.create({
     width: "50%",
     height: "100%",
     display: "flex",
+    bottom: 20,
     justifyContent: "flex-end",
     alignItems: "center",
-    paddingHorizontal:10,
+    paddingHorizontal: 10,
   },
   leftView: {
     left: 0,
@@ -245,11 +369,55 @@ const styles = StyleSheet.create({
     color: "#ff5c00",
     fontWeight: 700,
   },
-  footer: {
-    paddingVertical: 20,
+  // Table-UI
+  tableHeader: {
+    flexDirection: "row",
+    backgroundColor: "#FFA726",
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    padding: 10,
+  },
+  headerCell: {
+    flex: 1,
+    fontWeight: "600",
+    color: "white",
+    textAlign: "center",
+  },
+  row: {
+    flexDirection: "row",
+    backgroundColor: "#fff",
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
+  },
+  cell: {
+    flex: 1,
+    textAlign: "center",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: 16,
+  },
+  number: {
+    color: "green",
+    fontWeight: "bold",
+    fontSize: 18,
+  },
+  circle: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+  },
+  backButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 20,
   },
   backText: {
-    fontSize: 22,
-    color: "blue",
+    marginLeft: 5,
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  buttonContainer: {
+    alignItems: "center",
   },
 });
