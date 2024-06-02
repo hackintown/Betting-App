@@ -1,6 +1,6 @@
 // app/index.tsx
 import { Provider as PaperProvider, Button } from "react-native-paper";
-import { router } from "expo-router";
+import { Link, router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import AwesomeIcon from "react-native-vector-icons/FontAwesome";
 import {
@@ -13,24 +13,22 @@ import {
   FlatList,
   ListRenderItem,
   TouchableOpacity,
+  Linking,
 } from "react-native";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { Icon } from "@rneui/themed";
 
 const { width: viewportWidth } = Dimensions.get("window");
 const data = [{ title: "Item 1" }, { title: "Item 2" }, { title: "Item 3" }];
 
 type TableItem = {
   period: number;
-  number: number;
   bigSmall: string;
-  color: string;
 };
 const initialTableData: TableItem[] = [
   {
     period: 20240601010938,
-    number: 9,
     bigSmall: "Big",
-    color: "green",
   },
 ];
 
@@ -41,6 +39,10 @@ type Item = {
 const TCLotterScreen: React.FC = () => {
   const [tableData, setTableData] = useState<TableItem[]>(initialTableData);
   const [dailyActiveUsers, setDailyActiveUsers] = useState(0);
+  const [minutesTens, setMinutesTens] = useState(0);
+  const [minutesOnes, setMinutesOnes] = useState(1);
+  const [secondsTens, setSecondsTens] = useState(0);
+  const [secondsOnes, setSecondsOnes] = useState(0);
 
   useEffect(() => {
     const updateDAU = () => {
@@ -55,26 +57,55 @@ const TCLotterScreen: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const intervalUpdateData = setInterval(() => {
-      // Update "bigSmall" randomly for the first item
-      const updatedBigSmall = Math.random() > 0.5 ? "Big" : "Small";
+    const timer = setInterval(() => {
+      let newSecondsOnes = secondsOnes - 1;
+      let newSecondsTens = secondsTens;
+      let newMinutesOnes = minutesOnes;
+      let newMinutesTens = minutesTens;
 
-      // Increase "period" by 1
-      const updatedPeriod = tableData[0].period + 1;
+      if (newSecondsOnes === -1) {
+        newSecondsOnes = 9;
+        newSecondsTens = secondsTens - 1;
+      }
+      if (newSecondsTens === -1) {
+        newSecondsTens = 5;
+        newMinutesOnes = minutesOnes - 1;
+      }
+      if (newMinutesOnes === -1) {
+        newMinutesOnes = 9;
+        newMinutesTens = minutesTens - 1;
+      }
+      if (newMinutesTens === -1) {
+        newMinutesTens = 0; // Reset back to 0 when timer reaches 00:00
+        newMinutesOnes = 1;
+        newSecondsTens = 0;
+        newSecondsOnes = 0;
 
-      // Update both "period" and "bigSmall" of the first item
-      setTableData((prevData) => [
-        {
-          ...prevData[0],
-          period: updatedPeriod,
-          bigSmall: updatedBigSmall,
-        },
-        ...prevData.slice(1), // Keep other items unchanged
-      ]);
-    }, 1000); // Update every second
+        // Update "bigSmall" randomly
+        const updatedBigSmall = Math.random() > 0.5 ? "Big" : "Small";
 
-    return () => clearInterval(intervalUpdateData); // Clear interval on component unmount
-  }, [tableData]);
+        // Increase "period" by 1
+        const updatedPeriod = tableData[0].period + 1;
+
+        // Update both "period" and "bigSmall" of the first item
+        setTableData((prevData) => [
+          {
+            ...prevData[0],
+            period: updatedPeriod,
+            bigSmall: updatedBigSmall,
+          },
+          ...prevData.slice(1), // Keep other items unchanged
+        ]);
+      }
+
+      setSecondsOnes(newSecondsOnes);
+      setSecondsTens(newSecondsTens);
+      setMinutesOnes(newMinutesOnes);
+      setMinutesTens(newMinutesTens);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [minutesTens, minutesOnes, secondsTens, secondsOnes, tableData]);
 
   const renderItem: ListRenderItem<TableItem> = ({ item }) => (
     <View style={styles.row}>
@@ -82,6 +113,12 @@ const TCLotterScreen: React.FC = () => {
       <Text style={styles.cell}>{item.bigSmall}</Text>
     </View>
   );
+
+  // Telegram-Press
+  const handleTelegram = () => {
+    Linking.openURL("https://t.me/TheExcellentEarning");
+  };
+
   return (
     <View style={[styles.container, { flexDirection: "column" }]}>
       <View style={styles.header}>
@@ -181,19 +218,19 @@ const TCLotterScreen: React.FC = () => {
             </Text>
             <View style={styles.leftContent}>
               <View style={styles.timeWrap}>
-                <Text style={styles.timeCount}>0</Text>
+                <Text style={styles.timeCount}>{minutesTens}</Text>
               </View>
               <View style={styles.timeWrap}>
-                <Text style={styles.timeCount}>0</Text>
+                <Text style={styles.timeCount}>{minutesOnes}</Text>
               </View>
               <View style={styles.timeWrap}>
                 <Text style={styles.timeCount}>:</Text>
               </View>
               <View style={styles.timeWrap}>
-                <Text style={styles.timeCount}>0</Text>
+                <Text style={styles.timeCount}>{secondsTens}</Text>
               </View>
               <View style={styles.timeWrap}>
-                <Text style={styles.timeCount}>0</Text>
+                <Text style={styles.timeCount}>{secondsOnes}</Text>
               </View>
             </View>
           </View>
@@ -234,38 +271,26 @@ const TCLotterScreen: React.FC = () => {
           style={{
             display: "flex",
             flexDirection: "row",
-            gap: 10,
-            marginVertical: 10,
+            gap: 20,
+            justifyContent: "center",
+            marginVertical: 18,
             width: "100%",
           }}
         >
-          <PaperProvider
-            settings={{
-              icon: (props) => <AwesomeIcon {...props} />,
-            }}
+          <Button
+            icon={() => <Icon name="person-add" size={20} color="white" />}
+            mode="contained"
+            onPress={() => console.log("Pressed")}
           >
-            <Button
-              mode="contained"
-              onPress={() => console.log("Pressed")}
-              icon="user-plus"
-              style={{ marginBottom: 10 }}
-            >
-              Register
-            </Button>
-          </PaperProvider>
-          <PaperProvider
-            settings={{
-              icon: (props) => <AwesomeIcon {...props} />,
-            }}
+            Register
+          </Button>
+          <Button
+            icon={() => <Icon name="telegram" size={20} color="white" />}
+            mode="contained"
+            onPress={handleTelegram}
           >
-            <Button
-              mode="contained"
-              onPress={() => console.log("Pressed")}
-              icon="telegram"
-            >
-              Telegram
-            </Button>
-          </PaperProvider>
+            Telegram
+          </Button>
         </View>
         <View>
           <TouchableOpacity
@@ -273,7 +298,7 @@ const TCLotterScreen: React.FC = () => {
             style={styles.backButton}
           >
             <MaterialIcons name="arrow-back-ios" size={15} color="black" />
-            <Text style={styles.backText}>Go Back</Text>
+            <Text style={styles.backText}>Go Back to Dashboard</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -334,8 +359,8 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   header: {
-    paddingTop: 20,
-    marginBottom: 20,
+    paddingTop: 30,
+    marginBottom: 10,
     textAlign: "center",
     alignItems: "center",
   },

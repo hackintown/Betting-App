@@ -13,6 +13,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { Button } from "react-native-paper";
+import { Icon } from "@rneui/themed";
 
 export default function HomeScreen() {
   const onPress = () => {
@@ -39,7 +41,7 @@ export default function HomeScreen() {
           </Text>
           <View style={styles.imageWrap}>
             <View style={styles.imgContainer}>
-              <Pressable onPress={() => router.push('/tcLottery')}>
+              <Pressable onPress={() => router.push("/tcLottery")}>
                 <Image
                   source={{
                     uri: "https://play-lh.googleusercontent.com/3GWFLZYCm1eFjN2U8BibHBGYagNtXlYEkA-a1Vl_ERADUw1ApSdfktsNSuviVay8b08",
@@ -89,13 +91,14 @@ export default function HomeScreen() {
               />
             </View>
           </View>
-          <TouchableOpacity onPress={onPress}>
-            <View style={styles.btn}>
-              <Pressable>
-                <Text style={styles.btnText}>Logout</Text>
-              </Pressable>
-            </View>
-          </TouchableOpacity>
+          <Button
+            icon={() => <Icon name="logout" size={20} color="white" />}
+            mode="contained"
+            onPress={() => console.log("Pressed")}
+            labelStyle={{ fontSize: 18 }}
+          >
+            Logout
+          </Button>
         </ImageBackground>
       </View>
     </GestureHandlerRootView>
@@ -141,10 +144,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 30,
     flexWrap: "wrap",
+    marginBottom:25,
     justifyContent: "center",
   },
   imgContainer: {
-    padding: 6,
+    padding: 2,
     borderRadius: 20,
     borderWidth: 1,
     borderColor: "#fff",
@@ -164,25 +168,5 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 20,
     overflow: "hidden", // Ensure content respects rounded corners
-  },
-  /** Button */
-  btn: {
-    width: "100%",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 30,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderWidth: 1,
-    marginTop: 50,
-    backgroundColor: "#075eec",
-    borderColor: "#075eec",
-  },
-  btnText: {
-    fontSize: 18,
-    lineHeight: 26,
-    fontWeight: "600",
-    color: "#fff",
   },
 });
