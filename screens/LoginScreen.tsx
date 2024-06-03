@@ -10,16 +10,14 @@ import {
   StyleSheet,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { useNavigation } from "@react-navigation/native";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/app/firebaseConfig";
+import { auth, db } from "@/app/firebaseConfig";
 import { router } from "expo-router";
 
 const LoginScreen: React.FC = () => {
   const [email, setEmail] = useState<string>(""); // State to store email
   const [password, setPassword] = useState<string>(""); // State to store password
-  const navigation = useNavigation();
 
   const handleLogin = async (email: string, password: string) => {
     try {

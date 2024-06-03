@@ -6,6 +6,7 @@ import * as Updates from 'expo-updates';
 const CheckForUpdates: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdated, setIsUpdated] = useState(false);
+  const [updateMessage, setUpdateMessage] = useState('');
 
   const checkForUpdates = async () => {
     setIsLoading(true);
@@ -14,9 +15,12 @@ const CheckForUpdates: React.FC = () => {
       if (update.isAvailable) {
         await Updates.fetchUpdateAsync();
         setIsUpdated(true);
+      } else {
+        setUpdateMessage('The app is up to date.');
       }
     } catch (e) {
-      console.error(e);
+      console.error('Error checking for updates:', e);
+      setUpdateMessage('Failed to check for updates.');
     } finally {
       setIsLoading(false);
     }
@@ -35,7 +39,7 @@ const CheckForUpdates: React.FC = () => {
           onPress={() => Updates.reloadAsync()}
         />
       )}
-      {!isLoading && !isUpdated && <Text>The app is up to date.</Text>}
+       {!isLoading && !isUpdated && <Text>{updateMessage}</Text>}
     </View>
   );
 };

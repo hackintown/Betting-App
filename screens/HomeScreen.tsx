@@ -94,7 +94,7 @@ export default function HomeScreen() {
           <Button
             icon={() => <Icon name="logout" size={20} color="white" />}
             mode="contained"
-            onPress={() => console.log("Pressed")}
+            onPress={() => router.push('/login')}
             labelStyle={{ fontSize: 18 }}
           >
             Logout
