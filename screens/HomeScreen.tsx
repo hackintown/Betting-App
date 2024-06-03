@@ -37,7 +37,7 @@ export default function HomeScreen() {
           />
 
           <Text style={{ fontSize: 25, fontWeight: 900, marginTop: 10 }}>
-            Welcome to Excellent Hacks
+            Welcome to Excellent Hacks - Updated Latest Version: V1.0.0
           </Text>
           <View style={styles.imageWrap}>
             <View style={styles.imgContainer}>
