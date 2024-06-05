@@ -8,6 +8,8 @@ import {
   Pressable,
   ImageBackground,
   Image,
+  TouchableOpacity,
+  Linking,
 } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Button } from "react-native-paper";
@@ -16,6 +18,9 @@ import { Icon } from "@rneui/themed";
 export default function HomeScreen() {
   const onPress = () => {
     router.push("/login");
+  };
+  const handleImagePress = () => {
+    Linking.openURL("https://t.me/TheExcellentEarning");
   };
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -26,15 +31,22 @@ export default function HomeScreen() {
           }}
           style={styles.background}
         >
-          <Image
-            source={{
-              uri: "https://biospc.org/wp-content/uploads/2023/11/TC-Lottery-1024x576.jpg",
-            }}
-            style={styles.dashboard}
-          />
+          <TouchableOpacity onPress={handleImagePress} style={styles.banner}>
+            <Image
+              source={require("../assets/images/win_banner.jpg")}
+              style={{ width: "100%", height: "100%", resizeMode: "contain" }}
+            />
+          </TouchableOpacity>
 
-          <Text style={{ fontSize: 25, fontWeight: 900, marginTop: 10 }}>
-            Welcome to Excellent Hacks - Updated Latest Version: V1.0.0
+          <Text
+            style={{
+              fontSize: 25,
+              fontWeight: 900,
+              marginTop: 10,
+              color: "darkblue",
+            }}
+          >
+            Welcome to Excellent Hacks
           </Text>
           <View style={styles.imageWrap}>
             <View style={styles.imgContainer}>
@@ -48,12 +60,14 @@ export default function HomeScreen() {
               </Pressable>
             </View>
             <View style={styles.imgContainer}>
-              <Image
-                source={{
-                  uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_jO0hO6Hw_rP3fwpIz3t0-3vycrV16LI8ur_iUeC_e7JO0fQA3Zl83d8L9pMNasgE0Ko&usqp=CAU",
-                }}
-                style={styles.image}
-              />
+              <Pressable onPress={() => router.push("/bigdaddy")}>
+                <Image
+                  source={{
+                    uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_jO0hO6Hw_rP3fwpIz3t0-3vycrV16LI8ur_iUeC_e7JO0fQA3Zl83d8L9pMNasgE0Ko&usqp=CAU",
+                  }}
+                  style={styles.image}
+                />
+              </Pressable>
             </View>
             <View style={styles.imgContainer}>
               <Image
@@ -64,12 +78,14 @@ export default function HomeScreen() {
               />
             </View>
             <View style={styles.imgContainer}>
-              <Image
-                source={{
-                  uri: "https://play-lh.googleusercontent.com/TvcahFACDBV9fGw8xgl_o0HdsA8jM7_aTMvd_Hz3Ta0zmztvHyeLwxuEyaqO538yz0Y",
-                }}
-                style={styles.image}
-              />
+              <Pressable onPress={() => router.push("/club55")}>
+                <Image
+                  source={{
+                    uri: "https://play-lh.googleusercontent.com/TvcahFACDBV9fGw8xgl_o0HdsA8jM7_aTMvd_Hz3Ta0zmztvHyeLwxuEyaqO538yz0Y",
+                  }}
+                  style={styles.image}
+                />
+              </Pressable>
             </View>
             <View style={styles.imgContainer}>
               <Image
@@ -91,7 +107,7 @@ export default function HomeScreen() {
           <Button
             icon={() => <Icon name="logout" size={20} color="white" />}
             mode="contained"
-            onPress={() => router.push('/login')}
+            onPress={() => router.push("/login")}
             labelStyle={{ fontSize: 18 }}
           >
             Logout
@@ -109,11 +125,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#f0f0f0",
   },
-  dashboard: {
+  banner: {
     width: "95%",
-    height: 150,
+    height: 160,
     marginTop: 80,
-    borderRadius: 20,
   },
   background: {
     width: "100%",
@@ -137,11 +152,11 @@ const styles = StyleSheet.create({
   },
   imageWrap: {
     display: "flex",
-    marginTop: 50,
+    marginTop: 30,
     flexDirection: "row",
     gap: 30,
     flexWrap: "wrap",
-    marginBottom:25,
+    marginBottom: 25,
     justifyContent: "center",
   },
   imgContainer: {

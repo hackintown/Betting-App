@@ -27,7 +27,7 @@ type TableItem = {
 };
 const initialTableData: TableItem[] = [
   {
-    period: 20240601010938,
+    period: 20240605011377,
     bigSmall: "Big",
   },
 ];
@@ -46,12 +46,12 @@ const TCLotterScreen: React.FC = () => {
 
   useEffect(() => {
     const updateDAU = () => {
-      const randomDAU = Math.floor(Math.random() * (1000 - 800 + 1)) + 800;
+      const randomDAU = Math.floor(Math.random() * (800 - 400 + 1)) + 200;
       setDailyActiveUsers(randomDAU);
     };
 
     updateDAU(); // Set an initial DAU value
-    const interval = setInterval(updateDAU, 3000); // Update DAU every 5 seconds
+    const interval = setInterval(updateDAU, 2000); // Update DAU every 5 seconds
 
     return () => clearInterval(interval); // Clear interval on component unmount
   }, []);
@@ -72,6 +72,7 @@ const TCLotterScreen: React.FC = () => {
         }
       } else {
         // If there is no saved end time, set a new end time
+        setTimeRemaining(60 * 1000);
         AsyncStorage.setItem(TIMER_KEY, (Date.now() + 60 * 1000).toString());
       }
     };
@@ -130,22 +131,20 @@ const TCLotterScreen: React.FC = () => {
   const handleTelegram = () => {
     Linking.openURL("https://t.me/TheExcellentEarning");
   };
-
+  //Refferal-Register
+  const handleRegister = () => {
+    Linking.openURL(
+      "https://www.9987up.club/#/register?invitationCode=683365672307"
+    );
+  };
   const minutes = Math.floor(timeRemaining / 60000);
   const seconds = Math.floor((timeRemaining % 60000) / 1000);
   const minutesTens = Math.floor(minutes / 10);
   const minutesOnes = minutes % 10;
   const secondsTens = Math.floor(seconds / 10);
   const secondsOnes = seconds % 10;
-  const handleStartTimer = () => {
-    // Set the timer started flag to true
-    setTimerStarted(true);
-  };
   return (
     <View style={[styles.container, { flexDirection: "column" }]}>
-      <TouchableOpacity onPress={handleStartTimer}>
-        <Text>Start Timer</Text>
-      </TouchableOpacity>
       <View style={styles.header}>
         <Text style={styles.heading}>
           TC Lottery <Text style={{ color: "blue" }}>Hacks</Text>
@@ -153,9 +152,7 @@ const TCLotterScreen: React.FC = () => {
       </View>
       <View>
         <Image
-          source={{
-            uri: "https://9987up.club/assets/png/XOSO_bg-33e377d7.png",
-          }}
+          source={require("../assets/images/wingo_blue_bg.png")}
           style={styles.dashboard}
         />
         <Text
@@ -172,22 +169,21 @@ const TCLotterScreen: React.FC = () => {
         </Text>
         <View style={styles.randomTextWrap}>
           <Text style={styles.randomText}>
-            Daily Active Users: {dailyActiveUsers}
+            Daily Active Users:{" "}
+            <Text style={{ fontSize: 25, color: "yellow", fontWeight: 700 }}>
+              {dailyActiveUsers}
+            </Text>
           </Text>
         </View>
 
         <Image
-          source={{
-            uri: "https://ossimg.9987cw.cc/TC/lotterycategory/lotterycategory_202312150334238m3v.png",
-          }}
+          source={require("../assets/images/round_ball_bg.png")}
           style={styles.numCircle}
         />
       </View>
       <View style={{ position: "relative" }}>
         <ImageBackground
-          source={{
-            uri: "https://9987up.club/assets/png/diban-ad1641e9.png",
-          }}
+          source={require("../assets/images/orange_time_bg.png")}
           style={styles.dashboard}
         >
           <View style={[styles.absoluteView, styles.leftView]}>
@@ -211,7 +207,7 @@ const TCLotterScreen: React.FC = () => {
               />
               <Image
                 source={{
-                  uri: "https://9987up.club/assets/png/n4-cb84933b.png",
+                  uri: "https://9987up.club/assets/png/n5-49d0e9c5.png",
                 }}
                 style={styles.iconBall}
               />
@@ -223,7 +219,7 @@ const TCLotterScreen: React.FC = () => {
               />
               <Image
                 source={{
-                  uri: "https://9987up.club/assets/png/n4-cb84933b.png",
+                  uri: "https://9987up.club/assets/png/n6-a56e0b9a.png",
                 }}
                 style={styles.iconBall}
               />
@@ -305,7 +301,7 @@ const TCLotterScreen: React.FC = () => {
           <Button
             icon={() => <Icon name="person-add" size={20} color="white" />}
             mode="contained"
-            onPress={() => console.log("Pressed")}
+            onPress={handleRegister}
           >
             Register
           </Button>
@@ -317,7 +313,7 @@ const TCLotterScreen: React.FC = () => {
             Telegram
           </Button>
         </View>
-        <View>
+        <View style={{ marginTop: 10 }}>
           <TouchableOpacity
             onPress={() => router.push("/home")}
             style={styles.backButton}
@@ -398,7 +394,7 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
   randomText: {
-    fontSize: 15,
+    fontSize: 18,
     color: "#fff",
     fontWeight: 400,
   },
@@ -431,6 +427,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontWeight: "600",
     color: "white",
+    fontSize: 16,
     textAlign: "center",
   },
   row: {
@@ -446,6 +443,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     fontSize: 16,
+    fontWeight: "600",
   },
   number: {
     color: "green",
