@@ -9,9 +9,6 @@ import {
   ImageBackground,
   Image,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { BlurView } from "expo-blur";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Button } from "react-native-paper";
 import { Icon } from "@rneui/themed";

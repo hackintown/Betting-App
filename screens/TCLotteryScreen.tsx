@@ -2,7 +2,7 @@
 import { Provider as PaperProvider, Button } from "react-native-paper";
 import { Link, router } from "expo-router";
 import React, { useEffect, useState } from "react";
-import AwesomeIcon from "react-native-vector-icons/FontAwesome";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   View,
   Text,
@@ -39,10 +39,10 @@ type Item = {
 const TCLotterScreen: React.FC = () => {
   const [tableData, setTableData] = useState<TableItem[]>(initialTableData);
   const [dailyActiveUsers, setDailyActiveUsers] = useState(0);
-  const [minutesTens, setMinutesTens] = useState(0);
-  const [minutesOnes, setMinutesOnes] = useState(1);
-  const [secondsTens, setSecondsTens] = useState(0);
-  const [secondsOnes, setSecondsOnes] = useState(0);
+  const [timeRemaining, setTimeRemaining] = useState(
+    (1000 - new Date().getMilliseconds()) % 1000
+  );
+  const [timerStarted, setTimerStarted] = useState(false);
 
   useEffect(() => {
     const updateDAU = () => {
@@ -55,57 +55,69 @@ const TCLotterScreen: React.FC = () => {
 
     return () => clearInterval(interval); // Clear interval on component unmount
   }, []);
+  const TIMER_KEY = "TIMER_KEY";
 
   useEffect(() => {
+    const loadTimer = async () => {
+      const savedEndTime = await AsyncStorage.getItem(TIMER_KEY);
+      if (savedEndTime) {
+        const endTime = parseInt(savedEndTime, 10);
+        const currentTime = Date.now();
+        if (currentTime < endTime) {
+          setTimeRemaining(endTime - currentTime);
+        } else {
+          // If the saved end time is in the past, reset the timer
+          setTimeRemaining(60 * 1000);
+          AsyncStorage.setItem(TIMER_KEY, (Date.now() + 60 * 1000).toString());
+        }
+      } else {
+        // If there is no saved end time, set a new end time
+        AsyncStorage.setItem(TIMER_KEY, (Date.now() + 60 * 1000).toString());
+      }
+    };
+
+    loadTimer();
+
     const timer = setInterval(() => {
-      let newSecondsOnes = secondsOnes - 1;
-      let newSecondsTens = secondsTens;
-      let newMinutesOnes = minutesOnes;
-      let newMinutesTens = minutesTens;
+      setTimeRemaining((prevTime) => {
+        if (prevTime <= 0) {
+          // Timer reached 0, reset to 1 minute
+          const newTime = 60 * 1000; // 1 minute in milliseconds
+          const newEndTime = Date.now() + newTime;
 
-      if (newSecondsOnes === -1) {
-        newSecondsOnes = 9;
-        newSecondsTens = secondsTens - 1;
-      }
-      if (newSecondsTens === -1) {
-        newSecondsTens = 5;
-        newMinutesOnes = minutesOnes - 1;
-      }
-      if (newMinutesOnes === -1) {
-        newMinutesOnes = 9;
-        newMinutesTens = minutesTens - 1;
-      }
-      if (newMinutesTens === -1) {
-        newMinutesTens = 0; // Reset back to 0 when timer reaches 00:00
-        newMinutesOnes = 1;
-        newSecondsTens = 0;
-        newSecondsOnes = 0;
+          // Update both "period" and "bigSmall"
+          const bigProbability = 0.4; // Adjust as needed
+          const updatedBigSmall =
+            Math.random() < bigProbability ? "Big" : "Small";
+          const updatedPeriod = tableData[0].period + 1;
 
-        // Update "bigSmall" randomly
-        const updatedBigSmall = Math.random() > 0.5 ? "Big" : "Small";
+          setTableData((prevData) => [
+            {
+              ...prevData[0],
+              period: updatedPeriod,
+              bigSmall: updatedBigSmall,
+            },
+            ...prevData.slice(1),
+          ]);
 
-        // Increase "period" by 1
-        const updatedPeriod = tableData[0].period + 1;
-
-        // Update both "period" and "bigSmall" of the first item
-        setTableData((prevData) => [
-          {
-            ...prevData[0],
-            period: updatedPeriod,
-            bigSmall: updatedBigSmall,
-          },
-          ...prevData.slice(1), // Keep other items unchanged
-        ]);
-      }
-
-      setSecondsOnes(newSecondsOnes);
-      setSecondsTens(newSecondsTens);
-      setMinutesOnes(newMinutesOnes);
-      setMinutesTens(newMinutesTens);
+          AsyncStorage.setItem(TIMER_KEY, newEndTime.toString());
+          return newTime;
+        }
+        return prevTime - 1000;
+      });
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [minutesTens, minutesOnes, secondsTens, secondsOnes, tableData]);
+  }, [tableData]);
+
+  useEffect(() => {
+    const saveEndTime = async () => {
+      const endTime = Date.now() + timeRemaining;
+      await AsyncStorage.setItem(TIMER_KEY, endTime.toString());
+    };
+
+    saveEndTime();
+  }, [timeRemaining]);
 
   const renderItem: ListRenderItem<TableItem> = ({ item }) => (
     <View style={styles.row}>
@@ -119,8 +131,21 @@ const TCLotterScreen: React.FC = () => {
     Linking.openURL("https://t.me/TheExcellentEarning");
   };
 
+  const minutes = Math.floor(timeRemaining / 60000);
+  const seconds = Math.floor((timeRemaining % 60000) / 1000);
+  const minutesTens = Math.floor(minutes / 10);
+  const minutesOnes = minutes % 10;
+  const secondsTens = Math.floor(seconds / 10);
+  const secondsOnes = seconds % 10;
+  const handleStartTimer = () => {
+    // Set the timer started flag to true
+    setTimerStarted(true);
+  };
   return (
     <View style={[styles.container, { flexDirection: "column" }]}>
+      <TouchableOpacity onPress={handleStartTimer}>
+        <Text>Start Timer</Text>
+      </TouchableOpacity>
       <View style={styles.header}>
         <Text style={styles.heading}>
           TC Lottery <Text style={{ color: "blue" }}>Hacks</Text>
