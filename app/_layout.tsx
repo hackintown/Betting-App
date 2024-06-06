@@ -3,13 +3,16 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Slot } from "expo-router";
 import { AuthProvider } from "@/context/AuthContext";
+import { DataProvider } from "@/context/DataContext";
 
 export default function RootLayout() {
   return (
     <AuthProvider>
-      <View style={styles.container}>
-        <Slot />
-      </View>
+      <DataProvider>
+        <View style={styles.container}>
+          <Slot />
+        </View>
+      </DataProvider>
     </AuthProvider>
   );
 }

@@ -17,6 +17,7 @@ import {
 } from "react-native";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { Icon } from "@rneui/themed";
+import { useDataContext } from "@/context/DataContext";
 
 const { width: viewportWidth } = Dimensions.get("window");
 const data = [{ title: "Item 1" }, { title: "Item 2" }, { title: "Item 3" }];
@@ -25,25 +26,12 @@ type TableItem = {
   period: number;
   bigSmall: string;
 };
-const initialTableData: TableItem[] = [
-  {
-    period: 20240605011377,
-    bigSmall: "Big",
-  },
-];
-
-type Item = {
-  title: string;
-};
 
 const TCLotterScreen: React.FC = () => {
-  const [tableData, setTableData] = useState<TableItem[]>(initialTableData);
   const [dailyActiveUsers, setDailyActiveUsers] = useState(0);
-  const [timeRemaining, setTimeRemaining] = useState(
-    (1000 - new Date().getMilliseconds()) % 1000
-  );
-  const [timerStarted, setTimerStarted] = useState(false);
-
+  const { data, loading, error } = useDataContext();
+  const [period, setPeriod] = useState<number | null>(null); 
+  console.log("hi", data);
   useEffect(() => {
     const updateDAU = () => {
       const randomDAU = Math.floor(Math.random() * (800 - 400 + 1)) + 200;
@@ -55,74 +43,9 @@ const TCLotterScreen: React.FC = () => {
 
     return () => clearInterval(interval); // Clear interval on component unmount
   }, []);
-  const TIMER_KEY = "TIMER_KEY";
-
-  useEffect(() => {
-    const loadTimer = async () => {
-      const savedEndTime = await AsyncStorage.getItem(TIMER_KEY);
-      if (savedEndTime) {
-        const endTime = parseInt(savedEndTime, 10);
-        const currentTime = Date.now();
-        if (currentTime < endTime) {
-          setTimeRemaining(endTime - currentTime);
-        } else {
-          // If the saved end time is in the past, reset the timer
-          setTimeRemaining(60 * 1000);
-          AsyncStorage.setItem(TIMER_KEY, (Date.now() + 60 * 1000).toString());
-        }
-      } else {
-        // If there is no saved end time, set a new end time
-        setTimeRemaining(60 * 1000);
-        AsyncStorage.setItem(TIMER_KEY, (Date.now() + 60 * 1000).toString());
-      }
-    };
-
-    loadTimer();
-
-    const timer = setInterval(() => {
-      setTimeRemaining((prevTime) => {
-        if (prevTime <= 0) {
-          // Timer reached 0, reset to 1 minute
-          const newTime = 60 * 1000; // 1 minute in milliseconds
-          const newEndTime = Date.now() + newTime;
-
-          // Update both "period" and "bigSmall"
-          const bigProbability = 0.4; // Adjust as needed
-          const updatedBigSmall =
-            Math.random() < bigProbability ? "Big" : "Small";
-          const updatedPeriod = tableData[0].period + 1;
-
-          setTableData((prevData) => [
-            {
-              ...prevData[0],
-              period: updatedPeriod,
-              bigSmall: updatedBigSmall,
-            },
-            ...prevData.slice(1),
-          ]);
-
-          AsyncStorage.setItem(TIMER_KEY, newEndTime.toString());
-          return newTime;
-        }
-        return prevTime - 1000;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [tableData]);
-
-  useEffect(() => {
-    const saveEndTime = async () => {
-      const endTime = Date.now() + timeRemaining;
-      await AsyncStorage.setItem(TIMER_KEY, endTime.toString());
-    };
-
-    saveEndTime();
-  }, [timeRemaining]);
-
   const renderItem: ListRenderItem<TableItem> = ({ item }) => (
     <View style={styles.row}>
-      <Text style={styles.cell}>{item.period}</Text>
+      <Text style={styles.cell}>{period !== null ? `Period: ${period + 1}` : ''}</Text>
       <Text style={styles.cell}>{item.bigSmall}</Text>
     </View>
   );
@@ -137,12 +60,6 @@ const TCLotterScreen: React.FC = () => {
       "https://www.9987up.club/#/register?invitationCode=683365672307"
     );
   };
-  const minutes = Math.floor(timeRemaining / 60000);
-  const seconds = Math.floor((timeRemaining % 60000) / 1000);
-  const minutesTens = Math.floor(minutes / 10);
-  const minutesOnes = minutes % 10;
-  const secondsTens = Math.floor(seconds / 10);
-  const secondsOnes = seconds % 10;
   return (
     <View style={[styles.container, { flexDirection: "column" }]}>
       <View style={styles.header}>
@@ -237,23 +154,7 @@ const TCLotterScreen: React.FC = () => {
             >
               Time Remaining
             </Text>
-            <View style={styles.leftContent}>
-              <View style={styles.timeWrap}>
-                <Text style={styles.timeCount}>{minutesTens}</Text>
-              </View>
-              <View style={styles.timeWrap}>
-                <Text style={styles.timeCount}>{minutesOnes}</Text>
-              </View>
-              <View style={styles.timeWrap}>
-                <Text style={styles.timeCount}>:</Text>
-              </View>
-              <View style={styles.timeWrap}>
-                <Text style={styles.timeCount}>{secondsTens}</Text>
-              </View>
-              <View style={styles.timeWrap}>
-                <Text style={styles.timeCount}>{secondsOnes}</Text>
-              </View>
-            </View>
+            <View style={styles.leftContent}></View>
           </View>
         </ImageBackground>
       </View>
@@ -262,11 +163,20 @@ const TCLotterScreen: React.FC = () => {
           <Text style={styles.headerCell}>Period No</Text>
           <Text style={styles.headerCell}>Big Small</Text>
         </View>
-        <FlatList
-          data={tableData}
+        <View>
+          {/* Render data from context */}
+          {data && (
+            <View style={styles.row}>
+              <Text style={styles.cell}>{data.timestamp}</Text>
+              <Text style={styles.cell}>{data.size}</Text>
+            </View>
+          )}
+        </View>
+        {/* <FlatList
+          data={contextData ? [contextData] : []} // Change this line to use the data from the context
           renderItem={renderItem}
           keyExtractor={(item) => item.period.toString()}
-        />
+        /> */}
       </View>
       <View style={styles.buttonContainer}>
         <View style={{ alignItems: "center" }}>
