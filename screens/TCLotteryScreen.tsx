@@ -5,9 +5,8 @@ import {
   ActivityIndicator,
   MD2Colors,
 } from "react-native-paper";
-import { Link, router } from "expo-router";
-import React, { useEffect, useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router } from "expo-router";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -15,28 +14,20 @@ import {
   Dimensions,
   Image,
   ImageBackground,
-  FlatList,
-  ListRenderItem,
   TouchableOpacity,
   Linking,
 } from "react-native";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import { Icon } from "@rneui/themed";
 import { useDataContext } from "@/context/DataContext";
 
 const { width: viewportWidth } = Dimensions.get("window");
 const data = [{ title: "Item 1" }, { title: "Item 2" }, { title: "Item 3" }];
 
-type TableItem = {
-  period: number;
-  bigSmall: string;
-};
-
 const TCLotterScreen: React.FC = () => {
   const [dailyActiveUsers, setDailyActiveUsers] = useState(0);
   const { data, loading, error } = useDataContext();
-  const [period, setPeriod] = useState<number | null>(null);
-  console.log("hi", data);
+  const [initialFetch, setInitialFetch] = useState(true);
   useEffect(() => {
     const updateDAU = () => {
       const randomDAU = Math.floor(Math.random() * (800 - 400 + 1)) + 200;
@@ -48,17 +39,22 @@ const TCLotterScreen: React.FC = () => {
 
     return () => clearInterval(interval); // Clear interval on component unmount
   }, []);
+  useEffect(() => {
+    if (!loading) {
+      setInitialFetch(false); // Set to false once loading is complete
+    }
+  }, [loading]);
 
   // Telegram-Press
-  const handleTelegram = () => {
+  const handleTelegram = useCallback(() => {
     Linking.openURL("https://t.me/TheExcellentEarning");
-  };
+  }, []);
   //Refferal-Register
-  const handleRegister = () => {
+  const handleRegister = useCallback(() => {
     Linking.openURL(
       "https://www.9987up.club/#/register?invitationCode=683365672307"
     );
-  };
+  }, []);
   return (
     <View style={[styles.container, { flexDirection: "column" }]}>
       <View style={styles.header}>
@@ -163,29 +159,28 @@ const TCLotterScreen: React.FC = () => {
           <Text style={styles.headerCell}>Big Small</Text>
         </View>
         <View>
-          {/* Render data from context */}
-          {data ? (
-            <View style={styles.row}>
-              <Text style={styles.cell}>
-                {(parseInt(data.timestamp) + 1).toString()}
+          {loading && initialFetch ? (
+            <View style={{ alignItems: "center", marginTop: 10 }}>
+              <Text
+                style={{ fontSize: 16, fontWeight: "600", marginBottom: 5 }}
+              >
+                Please wait, Predicting...
               </Text>
-              <Text style={styles.cell}>
-                {data.size === "बड़ा"
-                  ? "Big"
-                  : data.size === "छोटा"
-                  ? "Small"
-                  : data.size}
-              </Text>
+              <ActivityIndicator animating={true} color={MD2Colors.red800} />
             </View>
           ) : (
-            loading && (
-              <View style={{ alignItems: "center", marginTop: 10 }}>
-                <Text
-                  style={{ fontSize: 16, fontWeight: "600", marginBottom: 5 }}
-                >
-                  Please wait Predicting...
+            data && (
+              <View style={styles.row}>
+                <Text style={styles.cell}>
+                  {(parseInt(data.timestamp) + 1).toString()}
                 </Text>
-                <ActivityIndicator animating={true} color={MD2Colors.red800} />
+                <Text style={styles.cell}>
+                  {data.size === "बड़ा"
+                    ? "Big"
+                    : data.size === "छोटा"
+                    ? "Small"
+                    : data.size}
+                </Text>
               </View>
             )
           )}
@@ -206,8 +201,8 @@ const TCLotterScreen: React.FC = () => {
           >
             Create a new TC Lottery account by clicking the 'Register' button.
             This mod will not work with your old account. Click 'Register' to
-            create a new account. नया Account बनाने के लिए 'Register' बटन पर क्लिक
-            करें। 
+            create a new account. नया Account बनाने के लिए 'Register' बटन पर
+            क्लिक करें।
           </Text>
         </View>
         <View

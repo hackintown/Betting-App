@@ -1,12 +1,15 @@
 // components/CheckForUpdates.tsx
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
+import { Button, ActivityIndicator, Snackbar } from 'react-native-paper';
 import * as Updates from 'expo-updates';
 
 const CheckForUpdates: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdated, setIsUpdated] = useState(false);
   const [updateMessage, setUpdateMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [visible, setVisible] = useState(false);
 
   const checkForUpdates = async () => {
     setIsLoading(true);
@@ -20,7 +23,8 @@ const CheckForUpdates: React.FC = () => {
       }
     } catch (e) {
       console.error('Error checking for updates:', e);
-      setUpdateMessage('Failed to check for updates.');
+      setErrorMessage('Failed to check for updates. Please try again.');
+      setVisible(true);
     } finally {
       setIsLoading(false);
     }
@@ -30,16 +34,35 @@ const CheckForUpdates: React.FC = () => {
     checkForUpdates();
   }, []);
 
+  const handleRetry = () => {
+    setErrorMessage('');
+    setVisible(false);
+    checkForUpdates();
+  };
+
   return (
     <View style={styles.container}>
-      {isLoading && <ActivityIndicator size="large" color="#0000ff" />}
+      {isLoading && <ActivityIndicator size="large" animating />}
       {!isLoading && isUpdated && (
         <Button
-          title="An update is available. Reload the app?"
+          mode="contained"
           onPress={() => Updates.reloadAsync()}
-        />
+          style={styles.updateButton}
+        >
+          An update is available. Reload the app?
+        </Button>
       )}
-       {!isLoading && !isUpdated && <Text>{updateMessage}</Text>}
+      {!isLoading && !isUpdated && <Text>{updateMessage}</Text>}
+      <Snackbar
+        visible={visible}
+        onDismiss={() => setVisible(false)}
+        action={{
+          label: 'Retry',
+          onPress: handleRetry,
+        }}
+      >
+        {errorMessage}
+      </Snackbar>
     </View>
   );
 };
@@ -50,6 +73,9 @@ const styles = StyleSheet.create({
     bottom: 10,
     width: '100%',
     alignItems: 'center',
+  },
+  updateButton: {
+    marginTop: 10,
   },
 });
 

@@ -16,8 +16,12 @@ import { Button } from "react-native-paper";
 import { Icon } from "@rneui/themed";
 
 export default function HomeScreen() {
-  const onPress = () => {
-    router.push("/login");
+  const handlePress = (route: string) => {
+    try {
+      router.push(route);
+    } catch (error) {
+      console.error(`Failed to navigate to ${route}`, error);
+    }
   };
   const handleImagePress = () => {
     Linking.openURL("https://t.me/TheExcellentEarning");
@@ -50,7 +54,7 @@ export default function HomeScreen() {
           </Text>
           <View style={styles.imageWrap}>
             <View style={styles.imgContainer}>
-              <Pressable onPress={() => router.push("/tcLottery")}>
+              <Pressable onPress={() => handlePress("/tcLottery")}>
                 <Image
                   source={{
                     uri: "https://play-lh.googleusercontent.com/3GWFLZYCm1eFjN2U8BibHBGYagNtXlYEkA-a1Vl_ERADUw1ApSdfktsNSuviVay8b08",
@@ -60,7 +64,7 @@ export default function HomeScreen() {
               </Pressable>
             </View>
             <View style={styles.imgContainer}>
-              <Pressable onPress={() => router.push("/bigdaddy")}>
+              <Pressable onPress={() => handlePress("/bigdaddy")}>
                 <Image
                   source={{
                     uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_jO0hO6Hw_rP3fwpIz3t0-3vycrV16LI8ur_iUeC_e7JO0fQA3Zl83d8L9pMNasgE0Ko&usqp=CAU",
@@ -78,7 +82,7 @@ export default function HomeScreen() {
               />
             </View>
             <View style={styles.imgContainer}>
-              <Pressable onPress={() => router.push("/club55")}>
+              <Pressable onPress={() => handlePress("/club55")}>
                 <Image
                   source={{
                     uri: "https://play-lh.googleusercontent.com/TvcahFACDBV9fGw8xgl_o0HdsA8jM7_aTMvd_Hz3Ta0zmztvHyeLwxuEyaqO538yz0Y",
@@ -107,7 +111,7 @@ export default function HomeScreen() {
           <Button
             icon={() => <Icon name="logout" size={20} color="white" />}
             mode="contained"
-            onPress={() => router.push("/login")}
+            onPress={() => handlePress("/login")}
             labelStyle={{ fontSize: 18 }}
           >
             Logout
