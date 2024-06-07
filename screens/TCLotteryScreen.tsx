@@ -1,5 +1,10 @@
 // app/index.tsx
-import { Provider as PaperProvider, Button } from "react-native-paper";
+import {
+  Provider as PaperProvider,
+  Button,
+  ActivityIndicator,
+  MD2Colors,
+} from "react-native-paper";
 import { Link, router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -30,7 +35,7 @@ type TableItem = {
 const TCLotterScreen: React.FC = () => {
   const [dailyActiveUsers, setDailyActiveUsers] = useState(0);
   const { data, loading, error } = useDataContext();
-  const [period, setPeriod] = useState<number | null>(null); 
+  const [period, setPeriod] = useState<number | null>(null);
   console.log("hi", data);
   useEffect(() => {
     const updateDAU = () => {
@@ -43,12 +48,6 @@ const TCLotterScreen: React.FC = () => {
 
     return () => clearInterval(interval); // Clear interval on component unmount
   }, []);
-  const renderItem: ListRenderItem<TableItem> = ({ item }) => (
-    <View style={styles.row}>
-      <Text style={styles.cell}>{period !== null ? `Period: ${period + 1}` : ''}</Text>
-      <Text style={styles.cell}>{item.bigSmall}</Text>
-    </View>
-  );
 
   // Telegram-Press
   const handleTelegram = () => {
@@ -165,18 +164,32 @@ const TCLotterScreen: React.FC = () => {
         </View>
         <View>
           {/* Render data from context */}
-          {data && (
+          {data ? (
             <View style={styles.row}>
-              <Text style={styles.cell}>{data.timestamp}</Text>
-              <Text style={styles.cell}>{data.size}</Text>
+              <Text style={styles.cell}>
+                {(parseInt(data.timestamp) + 1).toString()}
+              </Text>
+              <Text style={styles.cell}>
+                {data.size === "बड़ा"
+                  ? "Big"
+                  : data.size === "छोटा"
+                  ? "Small"
+                  : data.size}
+              </Text>
             </View>
+          ) : (
+            loading && (
+              <View style={{ alignItems: "center", marginTop: 10 }}>
+                <Text
+                  style={{ fontSize: 16, fontWeight: "600", marginBottom: 5 }}
+                >
+                  Please wait Predicting...
+                </Text>
+                <ActivityIndicator animating={true} color={MD2Colors.red800} />
+              </View>
+            )
           )}
         </View>
-        {/* <FlatList
-          data={contextData ? [contextData] : []} // Change this line to use the data from the context
-          renderItem={renderItem}
-          keyExtractor={(item) => item.period.toString()}
-        /> */}
       </View>
       <View style={styles.buttonContainer}>
         <View style={{ alignItems: "center" }}>
@@ -191,11 +204,10 @@ const TCLotterScreen: React.FC = () => {
               backgroundColor: "#ffebee", // Light red background color
             }}
           >
-            Create a new TC Lottery account by clicking on the 'Register'
-            button. If you use this mod in your old account, the mod will not
-            work. Click 'Register' to create a new account. AR क्लिक करके एक नया
-            account बनाएं, यदि आप इस मॉड का उपयोग अपने पुराने account में करते
-            हैं, तो मॉड काम नहीं करेगा।
+            Create a new TC Lottery account by clicking the 'Register' button.
+            This mod will not work with your old account. Click 'Register' to
+            create a new account. नया Account बनाने के लिए 'Register' बटन पर क्लिक
+            करें। 
           </Text>
         </View>
         <View
