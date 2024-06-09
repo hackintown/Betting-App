@@ -64,7 +64,7 @@ const TCLotterScreen: React.FC = () => {
       <View style={[styles.container, { flexDirection: "column" }]}>
         <View style={styles.header}>
           <Text style={styles.heading}>
-            TC Lottery <Text style={{ color: "blue" }}>Hacks</Text>
+            TC Lottery <Text style={{ color: "blue" }}>HacksV.1</Text>
           </Text>
         </View>
         <View>
