@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
+import { Alert } from "react-native";
 
 interface DataContextProps {
   timestamp: string;
@@ -26,13 +27,16 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
     const fetchData = async () => {
       try {
         setLoading(true);
+        Alert.alert("Fetching data...");
         const response = await axios.get(
           "http://194.238.17.67/tc-lottery-prediction"
         );
+        Alert.alert("Data fetched:", response.data);
         const tcData = response.data.data;
         setData(tcData);
         setLoading(false);
       } catch (err) {
+        Alert.alert('Error me aagya');
         console.error(err); // Log the error
         if (axios.isAxiosError(err)) {
           setError(err.message);

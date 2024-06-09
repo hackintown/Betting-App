@@ -18,7 +18,9 @@
       "bundleIdentifier": "com.hackintown.ExcellentHacks"
     },
     "android": {
-      "permissions": ["INTERNET"],
+      "permissions": [
+        "INTERNET"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -26,7 +28,7 @@
       "package": "com.hackintown.ExcellentHacks"
     },
     "updates": {
-      "url": "https://u.expo.dev/3b2bc869-27e5-4129-9026-fe52a740391a"
+      "url": "https://u.expo.dev/cda19132-67d9-4d05-aabe-1f2cd8631d8e"
     },
     "web": {
       "bundler": "metro",
