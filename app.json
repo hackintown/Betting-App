@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "ExcellentHacks",
-    "slug": "ExcellentHacks",
+    "slug": "apkhacks",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -46,7 +46,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "3b2bc869-27e5-4129-9026-fe52a740391a"
+        "projectId": "cda19132-67d9-4d05-aabe-1f2cd8631d8e"
       }
     },
     "runtimeVersion": {
