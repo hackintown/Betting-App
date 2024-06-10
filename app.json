@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "ExcellentHacks",
-    "slug": "ExcellentHacks",
+    "slug": "hackintown-apk",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -43,11 +43,12 @@
         "origin": false
       },
       "eas": {
-        "projectId": "3b2bc869-27e5-4129-9026-fe52a740391a"
+        "projectId": "ed939bcf-bb06-4664-beab-3139c4fc5485"
       }
     },
     "runtimeVersion": {
       "policy": "appVersion"
-    }
+    },
+    "owner": "hackintown"
   }
 }
