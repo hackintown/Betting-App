@@ -32,7 +32,7 @@
     },
     "web": {
       "bundler": "metro",
-      "output": "static",
+      "output": "server",
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
@@ -43,7 +43,7 @@
     },
     "extra": {
       "router": {
-        "origin": false
+        "origin": "http://194.238.17.67"
       },
       "eas": {
         "projectId": "ed939bcf-bb06-4664-beab-3139c4fc5485"

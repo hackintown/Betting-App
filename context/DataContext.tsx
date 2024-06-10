@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
-import { Alert } from "react-native";
 
 interface DataContextProps {
   timestamp: string;
@@ -23,35 +22,36 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get(
-          "http://194.238.17.67/tc-lottery-prediction"
-        );
-        const tcData = response.data.data;
-        setData(tcData);
-        setError(null); // Reset error state on successful fetch
-      } catch (err) {
-        console.error("Error fetching data:", err); // Improved logging
-        if (axios.isAxiosError(err)) {
-          setError(err.message);
-          // Log more details about the Axios error
-          console.error("Axios error details:", {
-            message: err.message,
-            code: err.code,
-            config: err.config,
-            response: err.response,
-          });
-        } else {
-          setError("An unknown error occurred");
-        }
-      } finally {
-        setLoading(false);
+  // Function to fetch data from the API
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        "http://194.238.17.67/tc-lottery-prediction"
+      );
+      const tcData = response.data.data;
+      setData(tcData);
+      setError(null); // Reset error state on successful fetch
+    } catch (err) {
+      console.error("Error fetching data:", err);
+      if (axios.isAxiosError(err)) {
+        setError(err.message);
+        console.error("Axios error details:", {
+          message: err.message,
+          code: err.code,
+          config: err.config,
+          response: err.response,
+        });
+      } else {
+        setError("An unknown error occurred");
       }
-    };
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  // Fetch data on component mount and whenever the app is opened
+  useEffect(() => {
     fetchData(); // Initial fetch
 
     const intervalId = setInterval(fetchData, 10000); // Fetch data every 10 seconds

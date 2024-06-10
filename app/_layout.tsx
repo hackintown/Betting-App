@@ -1,14 +1,15 @@
+ // app/_layout.tsx
 import React, { useEffect } from "react";
 import { View, StyleSheet } from "react-native";
+import { Slot } from "expo-router";
 import { AuthProvider } from "@/context/AuthContext";
 import { DataProvider } from "@/context/DataContext";
-import { registerBackgroundFetchAsync, unregisterBackgroundFetchAsync } from "./backgroundFetch";
+import {
+  registerBackgroundFetchAsync,
+  unregisterBackgroundFetchAsync,
+} from "./backgroundFetch";
 
-interface RootLayoutProps {
-  children?: React.ReactNode;
-}
-
-const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
+export default function RootLayout() {
   useEffect(() => {
     registerBackgroundFetchAsync();
 
@@ -16,23 +17,19 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
       unregisterBackgroundFetchAsync();
     };
   }, []);
-
   return (
     <AuthProvider>
       <DataProvider>
         <View style={styles.container}>
-          {/* Render Slot component for routing */}
-          {children}
+          <Slot />
         </View>
       </DataProvider>
     </AuthProvider>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
 });
-
-export default RootLayout;
