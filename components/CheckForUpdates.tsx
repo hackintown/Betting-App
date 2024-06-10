@@ -6,21 +6,13 @@ import * as Updates from 'expo-updates';
 
 const CheckForUpdates: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [isUpdated, setIsUpdated] = useState(false);
-  const [updateMessage, setUpdateMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [visible, setVisible] = useState(false);
 
   const checkForUpdates = async () => {
     setIsLoading(true);
     try {
-      const update = await Updates.checkForUpdateAsync();
-      if (update.isAvailable) {
-        await Updates.fetchUpdateAsync();
-        setIsUpdated(true);
-      } else {
-        setUpdateMessage('The app is up to date.');
-      }
+      await Updates.checkForUpdateAsync();
     } catch (e) {
       console.error('Error checking for updates:', e);
       setErrorMessage('Failed to check for updates. Please try again.');
@@ -40,19 +32,32 @@ const CheckForUpdates: React.FC = () => {
     checkForUpdates();
   };
 
+  const handleUpdate = async () => {
+    setIsLoading(true);
+    try {
+      await Updates.fetchUpdateAsync();
+      setIsLoading(false);
+      Updates.reloadAsync();
+    } catch (e) {
+      console.error('Error updating the app:', e);
+      setErrorMessage('Failed to update the app. Please try again.');
+      setVisible(true);
+      setIsLoading(false);
+    }
+  };
+
   return (
     <View style={styles.container}>
       {isLoading && <ActivityIndicator size="large" animating />}
-      {!isLoading && isUpdated && (
+      {!isLoading && (
         <Button
           mode="contained"
-          onPress={() => Updates.reloadAsync()}
+          onPress={handleUpdate}
           style={styles.updateButton}
         >
-          An update is available. Reload the app?
+          Check for Updates
         </Button>
       )}
-      {!isLoading && !isUpdated && <Text>{updateMessage}</Text>}
       <Snackbar
         visible={visible}
         onDismiss={() => setVisible(false)}
