@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "ExcellentHacks",
-    "slug": "apkhacks",
+    "slug": "hackintown-apk",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -27,8 +27,8 @@
       },
       "package": "com.hackintown.ExcellentHacks"
     },
-    "updates": {
-      "url": "https://u.expo.dev/cda19132-67d9-4d05-aabe-1f2cd8631d8e"
+    "updates": { 
+      "url": "https://u.expo.dev/ed939bcf-bb06-4664-beab-3139c4fc5485"
     },
     "web": {
       "bundler": "metro",
@@ -46,7 +46,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "cda19132-67d9-4d05-aabe-1f2cd8631d8e"
+        "projectId": "ed939bcf-bb06-4664-beab-3139c4fc5485"
       }
     },
     "runtimeVersion": {
