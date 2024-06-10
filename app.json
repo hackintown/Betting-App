@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "ExcellentHacks",
+    "name": "hackintownapk",
     "slug": "hackintown-apk",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -15,7 +15,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.hackintown.ExcellentHacks"
+      "bundleIdentifier": "com.hackintown.hackintownapk"
     },
     "android": {
       "permissions": [
@@ -25,7 +25,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.hackintown.ExcellentHacks"
+      "package": "com.hackintown.hackintownapk"
     },
     "updates": { 
       "url": "https://u.expo.dev/ed939bcf-bb06-4664-beab-3139c4fc5485"

@@ -1,13 +1,13 @@
-// app/index.tsx
 import React from "react";
 import { View, ActivityIndicator } from "react-native";
 import { useAuth } from "@/context/AuthContext";
-import { createStackNavigator } from '@react-navigation/stack';// Import StackNavigator from Expo's router
+import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from "@/screens/LoginScreen";
 import HomeScreen from "@/screens/HomeScreen";
 import CheckForUpdates from "@/components/CheckForUpdates";
+import RootLayout from "./_layout";
 
-const Stack = createStackNavigator(); // Create a StackNavigator
+const Stack = createStackNavigator();
 
 const Index = () => {
   const { user, loading } = useAuth();
@@ -21,25 +21,26 @@ const Index = () => {
   }
 
   return (
-    <Stack.Navigator>
-      {/* Set screen options for each screen */}
-      <Stack.Screen 
-        name="Home" 
-        component={user ? LoginScreen : HomeScreen} 
-        options={{ 
-          title: user ? 'Login' : 'Home', // Set the title based on user status
-          headerShown: true // Show header
-        }} 
-      />
-      <Stack.Screen 
-        name="CheckForUpdates" 
-        component={CheckForUpdates} 
-        options={{ 
-          title: 'Check for Updates', // Set custom title
-          headerShown: true // Show header
-        }} 
-      />
-    </Stack.Navigator>
+    <RootLayout>
+      <Stack.Navigator>
+        <Stack.Screen 
+          name="Home" 
+          component={user ? LoginScreen : HomeScreen} 
+          options={{ 
+            title: user ? 'Login' : 'Home', 
+            headerShown: true 
+          }} 
+        />
+        <Stack.Screen 
+          name="CheckForUpdates" 
+          component={CheckForUpdates} 
+          options={{ 
+            title: 'Check for Updates', 
+            headerShown: true 
+          }} 
+        />
+      </Stack.Navigator>
+    </RootLayout>
   );
 };
 

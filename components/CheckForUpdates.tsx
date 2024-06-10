@@ -1,55 +1,59 @@
-// components/CheckForUpdates.tsx
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Button, ActivityIndicator, Snackbar } from 'react-native-paper';
 import * as Updates from 'expo-updates';
 
 const CheckForUpdates: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [visible, setVisible] = useState(false);
+  const [isSnackbarVisible, setIsSnackbarVisible] = useState(false);
 
+  // Function to check for updates
   const checkForUpdates = async () => {
     setIsLoading(true);
     try {
       await Updates.checkForUpdateAsync();
-    } catch (e) {
-      console.error('Error checking for updates:', e);
+    } catch (error) {
+      console.error('Error checking for updates:', error);
       setErrorMessage('Failed to check for updates. Please try again.');
-      setVisible(true);
+      setIsSnackbarVisible(true);
     } finally {
       setIsLoading(false);
     }
   };
 
-  useEffect(() => {
-    checkForUpdates();
-  }, []);
-
+  // Function to handle retrying after an update error
   const handleRetry = () => {
     setErrorMessage('');
-    setVisible(false);
+    setIsSnackbarVisible(false);
     checkForUpdates();
   };
 
+  // Function to handle updating the app
   const handleUpdate = async () => {
     setIsLoading(true);
     try {
       await Updates.fetchUpdateAsync();
       setIsLoading(false);
       Updates.reloadAsync();
-    } catch (e) {
-      console.error('Error updating the app:', e);
+    } catch (error) {
+      console.error('Error updating the app:', error);
       setErrorMessage('Failed to update the app. Please try again.');
-      setVisible(true);
+      setIsSnackbarVisible(true);
       setIsLoading(false);
     }
   };
 
+  // useEffect hook to check for updates when the component mounts
+  useEffect(() => {
+    checkForUpdates();
+  }, []);
+
   return (
     <View style={styles.container}>
-      {isLoading && <ActivityIndicator size="large" animating />}
-      {!isLoading && (
+      {isLoading ? (
+        <ActivityIndicator size="large" animating />
+      ) : (
         <Button
           mode="contained"
           onPress={handleUpdate}
@@ -59,8 +63,8 @@ const CheckForUpdates: React.FC = () => {
         </Button>
       )}
       <Snackbar
-        visible={visible}
-        onDismiss={() => setVisible(false)}
+        visible={isSnackbarVisible}
+        onDismiss={() => setIsSnackbarVisible(false)}
         action={{
           label: 'Retry',
           onPress: handleRetry,
